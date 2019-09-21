@@ -28,12 +28,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void callPreferences() {
+        //Get all shared prefs for this app
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        String titlePref = prefs.getString( "UserTitle","Notebook");
-        setTitle(titlePref);
+        //get the string value from prefs for the key
+        String titlePref = prefs.getString("UserTitle", "Notebook");
+        if (titlePref.equals(null)) {
+            setTitle(captureTitle(prefs));
+        } else {
+            setTitle(titlePref);
+        }
+    }
+
+    private String captureTitle(SharedPreferences prefs) {
+        /* TODO
+         * Show a dialog to get user input.
+         * If they typed nothing, then pretend they typed Notebook
+         * Store whatever they typed (or Notebook) in user prefs
+         * Return what they typed so title bar updates.
+         */
+        String userInput = "Notebook";
+        //Create an accessor to edit the preferences.
         SharedPreferences.Editor editor = prefs.edit();
+        //Put your name as the preferred title
         editor.putString( "UserTitle", "Scott's Notebook");
+        //changes will not save without  a commit
         editor.commit();
+
+        return userInput;
     }
 
 
