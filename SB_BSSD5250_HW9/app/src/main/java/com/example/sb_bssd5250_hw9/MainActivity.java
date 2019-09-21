@@ -2,10 +2,15 @@ package com.example.sb_bssd5250_hw9;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +21,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private static String LOGID = "MainActivity";
+    private EditText titleText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +52,20 @@ public class MainActivity extends AppCompatActivity {
          * Store whatever they typed (or Notebook) in user prefs
          * Return what they typed so title bar updates.
          */
+        // this is taken from: https://stackoverflow.com/questions/12876624/multiple-edittext-objects-in-alertdialog
+        LinearLayout alertLayout = new LinearLayout(this);
+        alertLayout.setOrientation(LinearLayout.VERTICAL);
+        alertLayout.setId(View.generateViewId());
+
+        alertLayout.addView(titleText);
+
+        return new AlertDialog.Builder(getActivity())
+                .setTitle("Modify Title")
+                .setView(alertLayout)
+                .setPositiveButton("Done", doneClickedListener)
+                .setNegativeButton("Cancel", null)
+                .create();
+
         String userInput = "Notebook";
         //Create an accessor to edit the preferences.
         SharedPreferences.Editor editor = prefs.edit();
@@ -56,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
         return userInput;
     }
+
+    private DialogInterface.OnClickListener doneClickedListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialogInterface, int i) {
+            //Log.d("noteEditorDialog", nameText.getText().toString());
+
+        }
+    };
 
 
     private void makeData() {
