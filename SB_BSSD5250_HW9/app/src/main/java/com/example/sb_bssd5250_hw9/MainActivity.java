@@ -3,6 +3,7 @@ package com.example.sb_bssd5250_hw9;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static String LOGID = "MainActivity";
     private EditText titleText;
+    private SharedPreferences prefs;
+    private String userInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,9 +38,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void callPreferences() {
         //Get all shared prefs for this app
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        prefs = getPreferences(MODE_PRIVATE);
         //get the string value from prefs for the key
         String titlePref = prefs.getString("UserTitle", "Notebook");
+        //setTitle(captureTitle(prefs));
         if (titlePref.equals(null)) {
             setTitle(captureTitle(prefs));
         } else {
@@ -57,22 +61,17 @@ public class MainActivity extends AppCompatActivity {
         alertLayout.setOrientation(LinearLayout.VERTICAL);
         alertLayout.setId(View.generateViewId());
 
+        titleText = new EditText(this);
         alertLayout.addView(titleText);
 
-        return new AlertDialog.Builder(getActivity())
-                .setTitle("Modify Title")
+        AlertDialog.Builder builder =  new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Modify Title")
                 .setView(alertLayout)
+                .setMessage("Enter a Screen Title.")
                 .setPositiveButton("Done", doneClickedListener)
                 .setNegativeButton("Cancel", null)
-                .create();
-
-        String userInput = "Notebook";
-        //Create an accessor to edit the preferences.
-        SharedPreferences.Editor editor = prefs.edit();
-        //Put your name as the preferred title
-        editor.putString( "UserTitle", "Scott's Notebook");
-        //changes will not save without  a commit
-        editor.commit();
+                .create()
+                .show();
 
         return userInput;
     }
@@ -80,7 +79,16 @@ public class MainActivity extends AppCompatActivity {
     private DialogInterface.OnClickListener doneClickedListener = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialogInterface, int i) {
-            //Log.d("noteEditorDialog", nameText.getText().toString());
+            Log.d("noteEditorDialog", titleText.getText().toString());
+            // get the user-entered title
+            String userInput = titleText.getText().toString();
+            titleText.invalidate();   // refresh immediate
+            //Create an accessor to edit the preferences.
+            SharedPreferences.Editor editor = prefs.edit();
+            //Put your name as the preferred title
+            editor.putString( "UserTitle", userInput);
+            //changes will not save without  a commit
+            editor.commit();
 
         }
     };
