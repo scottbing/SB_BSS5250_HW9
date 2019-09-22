@@ -40,16 +40,15 @@ public class MainActivity extends AppCompatActivity {
         //Get all shared prefs for this app
         prefs = getPreferences(MODE_PRIVATE);
         //get the string value from prefs for the key
-        String titlePref = prefs.getString("UserTitle", "Notebook");
-        //setTitle(captureTitle(prefs));
-        if (titlePref.equals(null)) {
-            setTitle(captureTitle(prefs));
+        String titlePref = prefs.getString("UserTitle", null);
+        if (titlePref.equals(null) || titlePref.isEmpty()) {
+            captureTitle(prefs);
         } else {
             setTitle(titlePref);
         }
     }
 
-    private String captureTitle(SharedPreferences prefs) {
+    private void captureTitle(SharedPreferences prefs) {
         /* TODO
          * Show a dialog to get user input.
          * If they typed nothing, then pretend they typed Notebook
@@ -72,8 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 .setNegativeButton("Cancel", null)
                 .create()
                 .show();
-
-        return userInput;
     }
 
     private DialogInterface.OnClickListener doneClickedListener = new DialogInterface.OnClickListener() {
@@ -82,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("noteEditorDialog", titleText.getText().toString());
             // get the user-entered title
             String userInput = titleText.getText().toString();
+            titleText.setText(userInput.toString());
             titleText.invalidate();   // refresh immediate
             //Create an accessor to edit the preferences.
             SharedPreferences.Editor editor = prefs.edit();
